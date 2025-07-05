@@ -4,12 +4,14 @@ import (
 	"HttpServer/configs"
 	"HttpServer/internal/auth"
 	"HttpServer/internal/hello"
+	"HttpServer/pkg/db"
 	"fmt"
 	"net/http"
 )
 
 func main() {
 	conf := configs.LoadConfig()
+	_ = db.NewDb(conf)
 	router := http.NewServeMux()
 	hello.NewHelloHandler(router)
 	auth.NewAuth(router, auth.AuthHandlerDeps{
