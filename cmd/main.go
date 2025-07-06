@@ -3,7 +3,7 @@ package main
 import (
 	"HttpServer/configs"
 	"HttpServer/internal/auth"
-	"HttpServer/internal/hello"
+	"HttpServer/internal/link"
 	"HttpServer/pkg/db"
 	"fmt"
 	"net/http"
@@ -11,11 +11,16 @@ import (
 
 func main() {
 	conf := configs.LoadConfig()
-	_ = db.NewDb(conf)
+	database := db.NewDb(conf)
 	router := http.NewServeMux()
-	hello.NewHelloHandler(router)
+	// Repositories
+	linkRepository := link.NewLinkRepository(database)
+	// Handlers
 	auth.NewAuth(router, auth.AuthHandlerDeps{
 		Config: conf,
+	})
+	link.NewLinkHandler(router, link.LinkHandlerDeps{
+		LinkRepository: linkRepository,
 	})
 
 	server := http.Server{
